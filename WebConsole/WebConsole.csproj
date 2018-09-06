@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>BarnardTech.WebConsole</PackageId>
+    <Authors>Chris Barnard</Authors>
+    <Company>Barnard Technology Ltd</Company>
+    <Description>Mirrors the local console onto a browser-based web console.</Description>
+    <FileVersion>0.0.1.0</FileVersion>
+    <AssemblyVersion>0.0.1.0</AssemblyVersion>
+    <Version>0.0.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseUrl>https://github.com/BarnardTechnology/WebConsole/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/BarnardTechnology/WebConsole</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/BarnardTechnology/WebConsole</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="WebConsoleContent\comms.js" />
+    <None Remove="WebConsoleContent\_public\fonts\svbasicmanual-webfont.woff" />
+    <None Remove="WebConsoleContent\_public\fonts\svbasicmanual-webfont.woff2" />
+    <None Remove="WebConsoleContent\_public\fonts\sv_basic.css" />
+    <None Remove="WebConsoleContent\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="WebConsoleContent\_public\comms.js" />
+    <EmbeddedResource Include="WebConsoleContent\_public\fonts\svbasicmanual-webfont.woff" />
+    <EmbeddedResource Include="WebConsoleContent\_public\fonts\svbasicmanual-webfont.woff2" />
+    <EmbeddedResource Include="WebConsoleContent\_public\fonts\sv_basic.css" />
+    <EmbeddedResource Include="WebConsoleContent\_public\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BarnardTech.WebSocketComms" Version="1.0.4" />
+    <PackageReference Include="MediaTypeMap" Version="2.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="WebSocketSharp-netstandard" Version="1.0.1" />
+  </ItemGroup>
+
+</Project>

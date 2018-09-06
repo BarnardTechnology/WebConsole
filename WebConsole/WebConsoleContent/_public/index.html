@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Web Console</title>
+    <link type="text/css" href="fonts/sv_basic.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #000000;
+            color: lightgrey;
+            padding: 2px;
+        }
+
+        #consoleDiv {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            font-family: 'sv_basic_manualbook', monospace;
+            font-size: 18px;
+            color: lightgrey;
+        }
+
+        .console-line {
+            height: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div id="consoleDiv"></div>
+    <script type="text/javascript" src="comms.js"></script>
+    <script>
+        var consoleDiv = document.getElementById("consoleDiv");
+        var currentLine;
+        var currentSpan = null;
+
+        function newLine() {
+            currentLine = document.createElement("div");
+            currentLine.className = "console-line";
+            currentSpan = null;
+            consoleDiv.appendChild(currentLine);
+        }
+
+        newLine();
+        var lastChar;
+        var currentColor;
+        var currentBackcolor;
+
+        function convertConsoleColor(color) {
+            switch (color) {
+                case 0:
+                case "Black":
+                    return "black";
+                case 7:
+                case "Gray":
+                    return "lightgrey";
+                case 8:
+                case "DarkGray":
+                    return "grey";
+                case 10:
+                case "Green":
+                    return "lawngreen";
+                case 2:
+                case "DarkGreen":
+                    return "green";
+                case 11:
+                case "Cyan":
+                    return "cyan";
+                case 3:
+                case "DarkCyan":
+                    return "darkcyan";
+                case 12:
+                case "Red":
+                    return "red";
+                case 4:
+                case "DarkRed":
+                    return "darkred";
+                case 13:
+                case "Magenta":
+                    return "magenta";
+                case 5:
+                case "DarkMagenta":
+                    return "darkmagenta";
+                case 9:
+                case "Blue":
+                    return "blue";
+                case 1:
+                case "DarkBlue":
+                    return "darkblue";
+                case 14:
+                case "Yellow":
+                    return "yellow";
+                case 6:
+                case "DarkYellow":
+                    return "darkgoldenrod";
+                case 15:
+                case "White":
+                    return "white";
+            }
+        }
+
+        function appendChar(char, color, backgroundcolor) {
+            color = convertConsoleColor(color);
+            backgroundcolor = convertConsoleColor(backgroundcolor);
+            if (currentColor !== color || currentBackcolor != backgroundcolor || currentSpan == null) {
+                currentSpan = document.createElement("span");
+                currentSpan.style.color = color;
+                currentSpan.style.backgroundColor = backgroundcolor;
+                currentColor = color;
+                currentBackcolor = backgroundcolor;
+                currentLine.appendChild(currentSpan);
+                document.body.scrollTop = document.body.scrollHeight;
+            }
+
+            switch (char) {
+                case "\r":
+                    newLine();
+                    break;
+                case "\n":
+                    if (lastChar !== "\r") {
+                        newLine();
+                    }
+                    break;
+                case "\b":
+                    currentSpan.innerText = currentSpan.innerText.substr(0, currentSpan.innerText.length - 1);
+                    break;
+                case " ":
+                    currentSpan.innerHTML += "&nbsp";
+                    break;
+                default:
+                    currentSpan.innerText += char;
+                    break;
+            }
+
+            lastChar = char;
+        }
+
+        var cmdLink = {
+            "WriteChar": function (char, color, backgroundcolor) {
+                appendChar(char, color, backgroundcolor);
+            }
+        };
+
+        var _comms = new Comms("localhost:888", "webconsole", cmdLink, function () {
+            _comms.SendCommand("GetBuffer", [], function (e) {
+                //console.log(e);
+                for (var i = 0; i < e.length; i++) {
+                    //console.log(e[i].ForegoundColor);
+                    appendChar(e[i].Value, e[i].ForegroundColor, e[i].BackgroundColor);
+                }
+            })
+        });
+
+        window.addEventListener("keypress", function (e) {
+            //console.log(e);
+            _comms.SendCommand("SendKeyPress", [e.charCode]);
+        });
+    </script>
+</body>
+</html>
